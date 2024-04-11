@@ -31,8 +31,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Material stuck;
 
     [Header("ShowPath")] 
-    public List<GameObject> pathSeekers;
+    public List<Vector3> pathSeekers = new List<Vector3>();
 
+    [FormerlySerializedAs("sphere")]
+    [Header("Mover")] 
+    [SerializeField] private GameObject mover;
+    
     //vars
     public Vector3 pointA;
     public Vector3 pointB;
@@ -69,12 +73,23 @@ public class GameManager : MonoBehaviour
                 DisableSeekers();
                 ShowPath();
                 break;
+            case States.MoveObject:
+                StartMover();
+                break;
             default:
                 Debug.LogWarning("Tragic accident");
                 break;
         }
     }
 
+    private void StartMover()
+    {
+        Vector3 mainSeekerPos = mainSeeker.transform.position;
+        mover.transform.position = new Vector3(mainSeekerPos.x, mainSeekerPos.y + 3f, mainSeekerPos.z);
+        mover.SetActive(true);
+        StartCoroutine(mover.GetComponent<MoveSphere>().MoveTowardsPoint(pathSeekers));
+    }
+    
     private void DisableSeekers()
     {
         foreach (var seeker in seekers)
@@ -87,13 +102,16 @@ public class GameManager : MonoBehaviour
     private void ShowPath()
     {
         ChangeMaterialToShowPath(lastSeeker);
-        
+        pathSeekers.Add(lastSeeker.transform.position);
         while(lastSeeker.GetComponent<StorePreviousSeeker>().previousSeeker != null)
         {
             lastSeeker = lastSeeker.GetComponent<StorePreviousSeeker>().previousSeeker;
-            if(GameObject.ReferenceEquals(lastSeeker,mainSeeker)) return;
+            pathSeekers.Add(lastSeeker.transform.position);
+            if(GameObject.ReferenceEquals(lastSeeker,mainSeeker)) break;
             ChangeMaterialToShowPath(lastSeeker);
         }
+        
+        StartState(States.MoveObject);
     }
 
     private void ChangeMaterialToShowPath(GameObject obj)
@@ -133,6 +151,7 @@ public enum States
     SetTwoRandomPoints,
     FindPathBetweenPoints,
     Finish,
+    MoveObject
 }
 
 public enum PathFindingEnum
