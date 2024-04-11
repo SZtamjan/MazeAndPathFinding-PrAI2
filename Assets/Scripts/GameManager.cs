@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -20,15 +21,21 @@ public class GameManager : MonoBehaviour
     public List<Seeker> seekers = new List<Seeker>();
     [SerializeField] private GameObject SeekerGO;
     [SerializeField] private GameObject EndPointGO;
+    [NonSerialized] public GameObject lastSeeker;
+    private GameObject mainSeeker;
 
     [Header("State Materials")] 
+    [SerializeField] private Material pathMaterial;
+    [SerializeField] private Material mainSeekerMaterial;
     [SerializeField] private Material disabled;
     [SerializeField] public Material stuck;
-    
+
+    [Header("ShowPath")] 
+    public List<GameObject> pathSeekers;
+
     //vars
     public Vector3 pointA;
     public Vector3 pointB;
-    public UnityEvent FoundEndPoint;
 
     private void Awake()
     {
@@ -37,7 +44,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        FoundEndPoint.AddListener(FoundEndPointMethod);
         _mazeGenerator = GetComponent<MazeGenerator>();
         StartState(States.GenerateMaze);
     }
@@ -53,17 +59,15 @@ public class GameManager : MonoBehaviour
             case States.SetTwoRandomPoints:
                 state = States.SetTwoRandomPoints;
                 SetPoints();
-                //do something
                 break;
             case States.FindPathBetweenPoints:
                 state = States.FindPathBetweenPoints;
                 InstantiatePathFinders();
-                //do something
                 break;
             case States.Finish:
                 state = States.Finish;
                 DisableSeekers();
-                //do something
+                ShowPath();
                 break;
             default:
                 Debug.LogWarning("Tragic accident");
@@ -79,25 +83,36 @@ public class GameManager : MonoBehaviour
             seeker.GetComponent<MeshRenderer>().material = disabled;
         }
     }
+
+    private void ShowPath()
+    {
+        ChangeMaterialToShowPath(lastSeeker);
+        
+        while(lastSeeker.GetComponent<StorePreviousSeeker>().previousSeeker != null)
+        {
+            lastSeeker = lastSeeker.GetComponent<StorePreviousSeeker>().previousSeeker;
+            if(GameObject.ReferenceEquals(lastSeeker,mainSeeker)) return;
+            ChangeMaterialToShowPath(lastSeeker);
+        }
+    }
+
+    private void ChangeMaterialToShowPath(GameObject obj)
+    {
+        obj.GetComponent<MeshRenderer>().material = pathMaterial;
+    }
     
     private void InstantiatePathFinders()
     {
         //Instantiate Seeker
-        GameObject godSeeker = Instantiate(SeekerGO, pointA, Quaternion.identity);
-        godSeeker.GetComponent<Seeker>().FillInfo(SeekerGO);
-        seekers.Add(godSeeker.GetComponent<Seeker>());
+        mainSeeker = Instantiate(SeekerGO, pointA, Quaternion.identity);
+        mainSeeker.GetComponent<Seeker>().FillInfo(SeekerGO,true,null);
+        mainSeeker.GetComponent<MeshRenderer>().material = mainSeekerMaterial;
+        //seekers.Add(seeker.GetComponent<Seeker>());
         
         //Instantiate EndPoint
         Instantiate(EndPointGO, pointB, Quaternion.identity);
-
-        //Activate them - chyba ma byc aktywowane na przycisk - jedno klikniecie ma byc jeden krok
     }
 
-    private void FoundEndPointMethod()
-    {
-        StartState(States.Finish);
-    }
-    
     private void SetPoints()
     {
         Vector3[] corners = _mazeGenerator.Corners;
@@ -117,7 +132,7 @@ public enum States
     GenerateMaze,
     SetTwoRandomPoints,
     FindPathBetweenPoints,
-    Finish
+    Finish,
 }
 
 public enum PathFindingEnum

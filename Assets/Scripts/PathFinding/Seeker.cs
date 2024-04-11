@@ -6,12 +6,15 @@ using UnityEngine;
 public class Seeker : MonoBehaviour
 {
     private SeekerStates currentState = SeekerStates.AbleToSeek;
-
+    
     private GameObject seekerPrefab;
+    private bool mainSeeker;
 
-    public void FillInfo(GameObject prefab)
+    public void FillInfo(GameObject prefab, bool godSeeker, GameObject prevSeeker)
     {
         seekerPrefab = prefab;
+        mainSeeker = godSeeker;
+        GetComponent<StorePreviousSeeker>().previousSeeker = prevSeeker;
     }
 
     private void Update()
@@ -26,14 +29,13 @@ public class Seeker : MonoBehaviour
     {
         if (currentState == SeekerStates.AbleToSeek)
         {
-            Debug.Log("weszedlo");
             MoveTo(transform.position + Vector3.forward);
             MoveTo(transform.position + Vector3.back);
             MoveTo(transform.position + Vector3.left);
             MoveTo(transform.position + Vector3.right);
         }
 
-        if (GameManager.Instance.state != States.Finish) GetComponent<MeshRenderer>().material = GameManager.Instance.stuck;
+        if (GameManager.Instance.state != States.Finish && !mainSeeker) GetComponent<MeshRenderer>().material = GameManager.Instance.stuck;
         currentState = SeekerStates.UnableToSeek;
     }
 
@@ -51,6 +53,7 @@ public class Seeker : MonoBehaviour
                     Debug.LogWarning("Wall, don't do anything");
                     return;
                 case "EndPoint":
+                    GameManager.Instance.lastSeeker = gameObject;
                     GameManager.Instance.StartState(States.Finish);
                     return;
             }
@@ -59,7 +62,7 @@ public class Seeker : MonoBehaviour
         {//nic nie ma na drodze
             //zespawnuj nastepnego seekera
             GameObject seeker = Instantiate(seekerPrefab, movePos, Quaternion.identity);
-            seeker.GetComponent<Seeker>().FillInfo(seekerPrefab);
+            seeker.GetComponent<Seeker>().FillInfo(seekerPrefab, false, gameObject);
             GameManager.Instance.seekers.Add(seeker.GetComponent<Seeker>());
         }
     }

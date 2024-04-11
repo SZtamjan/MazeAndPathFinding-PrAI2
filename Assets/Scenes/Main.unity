@@ -380,13 +380,13 @@ MonoBehaviour:
   seekers: []
   SeekerGO: {fileID: 2219964011664210004, guid: 5cd9364661dfae440afea2577b28a2d3, type: 3}
   EndPointGO: {fileID: 7234085124659208279, guid: 66d30982e24d8634582dc41300bc7f84, type: 3}
+  pathMaterial: {fileID: 2100000, guid: de0280bc057734245b82a947c32d5322, type: 2}
+  mainSeekerMaterial: {fileID: 2100000, guid: 29b5c85ffb423504fabd590e87a19151, type: 2}
   disabled: {fileID: 2100000, guid: 23bb5ecca77962d4c809103944d33c63, type: 2}
   stuck: {fileID: 2100000, guid: 96efe7f16f00a8149b1bddda6b354c41, type: 2}
+  pathSeekers: []
   pointA: {x: 0, y: 0, z: 0}
   pointB: {x: 0, y: 0, z: 0}
-  FoundEndPoint:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &541916827
 Transform:
   m_ObjectHideFlags: 0
