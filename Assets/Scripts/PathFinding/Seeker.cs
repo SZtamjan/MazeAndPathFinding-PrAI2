@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Seeker : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class Seeker : MonoBehaviour
     
     private GameObject seekerPrefab;
     private bool mainSeeker;
+    
+    private InputSeeker _inputSeeker;
+    private InputAction map;
 
     public void FillInfo(GameObject prefab, bool godSeeker, GameObject prevSeeker)
     {
@@ -16,17 +20,24 @@ public class Seeker : MonoBehaviour
         mainSeeker = godSeeker;
         GetComponent<StorePreviousSeeker>().previousSeeker = prevSeeker;
     }
-
-    private void Update()
+    
+    private void Start()
     {
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            CheckNext();
-        }
+        _inputSeeker = new InputSeeker();
+        _inputSeeker.MapaAkcji.Enable();
+        map = _inputSeeker.MapaAkcji.Akcja;
+        map.performed += CheckNext;
     }
 
-    public void CheckNext()
+    private void OnDisable()
     {
+        if(map != null) map.performed -= CheckNext;
+    }
+
+    public void CheckNext(InputAction.CallbackContext ctx)
+    {
+        if(!ctx.performed) return;
+        
         if (currentState == SeekerStates.AbleToSeek)
         {
             MoveTo(transform.position + Vector3.forward);
@@ -34,7 +45,7 @@ public class Seeker : MonoBehaviour
             MoveTo(transform.position + Vector3.left);
             MoveTo(transform.position + Vector3.right);
         }
-
+        
         if (GameManager.Instance.state != States.Finish && !mainSeeker) GetComponent<MeshRenderer>().material = GameManager.Instance.stuck;
         currentState = SeekerStates.UnableToSeek;
     }

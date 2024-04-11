@@ -17,11 +17,11 @@ public class GameManager : MonoBehaviour
     //Maze
     private MazeGenerator _mazeGenerator;
 
-    [Header("GO")]
-    public List<Seeker> seekers = new List<Seeker>();
-    [SerializeField] private GameObject SeekerGO;
-    [SerializeField] private GameObject EndPointGO;
+    [Header("GameObjects")]
+    [SerializeField] private GameObject SeekerPrefab;
+    [SerializeField] private GameObject EndPointPrafab;
     [NonSerialized] public GameObject lastSeeker;
+    [NonSerialized]public List<Seeker> seekers = new List<Seeker>(); //all placed seekers
     private GameObject mainSeeker;
 
     [Header("State Materials")] 
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Material stuck;
 
     [Header("ShowPath")] 
-    public List<Vector3> pathSeekers = new List<Vector3>();
+    public List<Vector3> pathSeekers = new List<Vector3>(); //shortest path from A to B
 
     [FormerlySerializedAs("sphere")]
     [Header("Mover")] 
@@ -122,13 +122,13 @@ public class GameManager : MonoBehaviour
     private void InstantiatePathFinders()
     {
         //Instantiate Seeker
-        mainSeeker = Instantiate(SeekerGO, pointA, Quaternion.identity);
-        mainSeeker.GetComponent<Seeker>().FillInfo(SeekerGO,true,null);
+        mainSeeker = Instantiate(SeekerPrefab, pointA, Quaternion.identity);
+        mainSeeker.GetComponent<Seeker>().FillInfo(SeekerPrefab,true,null);
         mainSeeker.GetComponent<MeshRenderer>().material = mainSeekerMaterial;
         //seekers.Add(seeker.GetComponent<Seeker>());
         
         //Instantiate EndPoint
-        Instantiate(EndPointGO, pointB, Quaternion.identity);
+        Instantiate(EndPointPrafab, pointB, Quaternion.identity);
     }
 
     private void SetPoints()

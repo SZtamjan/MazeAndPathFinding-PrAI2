@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 public class MoveSphere : MonoBehaviour
 {
     [SerializeField] private float speed = 1f;
-    [FormerlySerializedAs("addFixedYPos")] [SerializeField] private float addAddFixedYPos = 1.5f;
+    [SerializeField] private float addAddFixedYPos = 1.5f;
 
     public float AddFixedYPos
     {
