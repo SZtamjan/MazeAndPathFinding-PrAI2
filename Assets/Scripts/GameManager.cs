@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
     private void StartMover()
     {
         Vector3 mainSeekerPos = mainSeeker.transform.position;
-        mover.transform.position = new Vector3(mainSeekerPos.x, mainSeekerPos.y + 3f, mainSeekerPos.z);
+        mover.transform.position = new Vector3(mainSeekerPos.x, mainSeekerPos.y + mover.GetComponent<MoveSphere>().AddFixedYPos, mainSeekerPos.z);
         mover.SetActive(true);
         StartCoroutine(mover.GetComponent<MoveSphere>().MoveTowardsPoint(pathSeekers));
     }

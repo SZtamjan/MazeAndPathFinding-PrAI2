@@ -50,7 +50,7 @@ public class Seeker : MonoBehaviour
             switch (hit.collider.gameObject.tag)
             {
                 case "Wall":
-                    Debug.LogWarning("Wall, don't do anything");
+                    //Do nothing
                     return;
                 case "EndPoint":
                     GameManager.Instance.lastSeeker = gameObject;
