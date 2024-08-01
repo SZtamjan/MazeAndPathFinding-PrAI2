@@ -582,7 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16434339897e0564c8de6d4b6cca84de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 3
   addAddFixedYPos: 1.5
 --- !u!1 &541916824
 GameObject:
@@ -615,7 +615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mazeCellPrefab: {fileID: 8965845731222794080, guid: d8485e7f8112fbc47bab0d0d8dfafc92, type: 3}
-  _mazeWidth: 5
+  _mazeWidth: 8
   _mazeDepth: 10
   fixedYPos: 0.5
 --- !u!114 &541916826
@@ -631,7 +631,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  seekers: []
   SeekerPrefab: {fileID: 2219964011664210004, guid: 5cd9364661dfae440afea2577b28a2d3, type: 3}
   EndPointPrafab: {fileID: 7234085124659208279, guid: 66d30982e24d8634582dc41300bc7f84, type: 3}
   pathMaterial: {fileID: 2100000, guid: de0280bc057734245b82a947c32d5322, type: 2}
